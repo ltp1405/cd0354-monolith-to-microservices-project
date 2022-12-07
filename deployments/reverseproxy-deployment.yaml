@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverseproxy-deployment
+  labels:
+    service: reverseproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: reverseproxy
+  template:
+    metadata:
+      labels:
+        service: reverseproxy
+    spec:
+      containers:
+      - image: ltp1405/udagram-reverseproxy
+        name: reverseproxy
+        imagePullPolicy: Always          
+        ports:
+        - containerPort: 8080
+        envFrom:
+          - configMapRef:
+              name: config-env
+          - secretRef:
+              name: env-secret
+              optional: false # same as default; "mysecret" must exist
+                              # and include a key named "username"
